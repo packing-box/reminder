@@ -1,0 +1,53 @@
+[build-system]
+requires = ["setuptools>=61.0", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.dynamic]
+version = {attr = "reminder.__info__.__version__"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"*" = ["*.txt"]
+
+[project]
+name = "reminder-detector"
+authors = [
+  {name="Alexandre D'Hondt", email="alexandre.dhondt@gmail.com"},
+]
+description = "Implementation of the packing detection heuristic from the paper \"Packed PE File Detection for Malware Forensics\" of Han et al."
+license = {file = "LICENSE"}
+keywords = ["packing", "packed-executable", "packing-detection"]
+requires-python = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*,<4"
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Information Technology",
+  "Intended Audience :: Other Audience",
+  "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.7",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = [
+  "lief",
+]
+dynamic = ["version"]
+
+[project.readme]
+file = "README.md"
+content-type = "text/markdown"
+
+[project.urls]
+homepage = "https://github.com/packing-box/reminder"
+issues = "https://github.com/packing-box/reminder/issues"
+repository = "https://github.com/packing-box/reminder"
+
+[project.scripts]
+reminder = "reminder.__main__:main"
