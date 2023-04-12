@@ -63,7 +63,8 @@ def main():
     try:
         r = REMINDer(**vars(args)).detect(args.path)
         dt = str(perf_counter() - t1) if args.benchmark else ""
-        print(str(r))
+        if r is not None:
+            print(str(r))
         if dt != "":
             print(dt)
     except Exception as e:
