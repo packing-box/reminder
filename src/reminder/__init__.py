@@ -9,6 +9,8 @@ __all__ = ["REMINDer"]
 THRESHOLDS = {
     'default': 6.85,
     'PE':      6.85,
+    #'ELF': TODO
+    #'MACHO': TODO
 }
 
 
@@ -23,17 +25,18 @@ class REMINDer:
         :param binary: LIEF-parsed binary object
         :return:       (binary_type, ep_file_offset, name_of_ep_section)
         """
-        btype, fn = str(type(self.binary)).split(".")[1], os.path.basename(self.binary.name)
+        bn = self.binary
+        btype, fn = bn.format.name, os.path.basename(bn.name)
         try:
-            if btype == "ELF":
-                ep = self.binary.virtual_address_to_offset(self.binary.entrypoint)
+            if btype in ["ELF", "MACHO"]:
+                ep = bn.virtual_address_to_offset(bn.entrypoint)
                 # e.g. with UPX, the section table header gets packed too, hence LIEF gives 0 section parsed
-                ep_section = self.binary.section_from_offset(ep) if len(self.binary.sections) > 0 else None
+                ep_section = bn.section_from_offset(ep) if len(bn.sections) > 0 else None
                 # when #sections=0, the sample will be considered as packed anyway, so set wflag=False
-                wflag = ep_section.has(lief.ELF.SECTION_FLAGS.WRITE) if len(self.binary.sections) > 0 else False
+                wflag = ep_section.has(lief.ELF.SECTION_FLAGS.WRITE) if len(bn.sections) > 0 else False
             elif btype == "PE":
-                ep = self.binary.rva_to_offset(self.binary.optional_header.addressof_entrypoint)
-                ep_section = self.binary.section_from_rva(self.binary.optional_header.addressof_entrypoint)
+                ep_addr = bn.optional_header.addressof_entrypoint
+                ep, ep_section = bn.rva_to_offset(ep_addr), bn.section_from_rva(ep_addr)
                 wflag = ep_section.has_characteristic(lief.PE.SECTION_CHARACTERISTICS.MEM_WRITE)
             else:
                 if self.logger:
