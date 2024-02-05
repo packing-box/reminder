@@ -37,7 +37,7 @@ classifiers = [
   "Topic :: Security",
 ]
 dependencies = [
-  "lief",
+  "lief>=0.14.0",
 ]
 dynamic = ["version"]
 
