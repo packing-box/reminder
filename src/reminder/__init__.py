@@ -16,6 +16,17 @@ THRESHOLDS = {
 }
 
 
+def _ensure_str(s, encoding='utf-8', errors='strict'):
+    if isinstance(s, bytes):
+        try:
+            return s.decode(encoding, errors)
+        except:
+            return s.decode("latin-1")
+    elif not isinstance(s, (str, bytes)):
+        raise TypeError("not expecting type '%s'" % type(s))
+    return s
+
+
 class REMINDer:
     logger = None
     
@@ -35,7 +46,7 @@ class REMINDer:
         if ep_section is None:
             return True
         # display some debug information
-        section_name = ep_section.name.rstrip("\x00")
+        section_name = _ensure_str(ep_section.name).rstrip("\x00")
         if self.logger:
             self.logger.debug("EP at 0x%.8x in %s" % (ep, section_name))
         # now apply the heuristic from https://ieeexplore.ieee.org/document/5404211
