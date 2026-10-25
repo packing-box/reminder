@@ -20,7 +20,7 @@ def _ensure_str(s, encoding='utf-8', errors='strict'):
     if isinstance(s, bytes):
         try:
             return s.decode(encoding, errors)
-        except:
+        except UnicodeDecodeError:
             return s.decode("latin-1")
     elif not isinstance(s, (str, bytes)):
         raise TypeError("not expecting type '%s'" % type(s))
@@ -28,22 +28,22 @@ def _ensure_str(s, encoding='utf-8', errors='strict'):
 
 
 class REMINDer:
-    logger = None
-    
     def __init__(self, entropy_threshold=None, logger=None, **kwargs):
         """ Configure the detector with various parameters. """
         self.__entropy = entropy_threshold
-        REMINDer.logger = logger
-    
+        self.logger = logger
+
     def detect(self, executable):
         """ Analyze the input executable file using the custom heuristic. """
-        btype, ep, ep_section, ep_section_writable = REMINDer._get_ep_and_section(str(executable))
-        # in rare cases, it may occur that the EP could not be determiend with LIEF, then output accordingly
+        btype, ep, ep_section, ep_section_writable = self._get_ep_and_section(str(executable))
+        # in rare cases, it may occur that the EP could not be determined with LIEF, then output accordingly
         if ep is None:
             return "?"
         # in some ELF-related cases, it may occur that there is no section table header (e.g. when packed with UPX) ;
-        #  if so, consider as packed
+        #  if so, consider as packed ; the same applies when the EP lies outside of any section
         if ep_section is None:
+            if self.logger:
+                self.logger.debug("EP at 0x%.8x is not in any section" % ep)
             return True
         # display some debug information
         section_name = _ensure_str(ep_section.name).rstrip("\x00")
@@ -52,7 +52,7 @@ class REMINDer:
         # now apply the heuristic from https://ieeexplore.ieee.org/document/5404211
         # 1) check if the EP section is writable
         if ep_section_writable:
-            threshold = self.__entropy or THRESHOLDS.get(btype, THRESHOLDS['default'])
+            threshold = self.__entropy if self.__entropy is not None else THRESHOLDS.get(btype, THRESHOLDS['default'])
             if self.logger:
                 self.logger.debug("%s is writable" % section_name)
                 self.logger.debug("entropy = %.3f (threshold: %.3f)" % (ep_section.entropy, threshold))
@@ -60,26 +60,24 @@ class REMINDer:
             if ep_section.entropy > threshold:
                 return True
         return False
-    
-    @staticmethod
-    def _log(msg, exception, level="error"):
-        """ Helper for either logging a message if REMINDer.logger is defined or raising an exception. """
-        l = REMINDer.logger
-        if l:
-            getattr(l, level)(msg)
+
+    def _log(self, msg, exception, level="error"):
+        """ Helper for either logging a message if a logger is defined or raising an exception. """
+        if self.logger:
+            getattr(self.logger, level)(msg)
         else:
             raise exception(msg)
-    
-    @staticmethod
-    def _get_ep_and_section(path):
+
+    def _get_ep_and_section(self, path):
         """ Helper for computing the entry point and finding its section for each supported format.
-        :param binary: LIEF-parsed binary object
-        :return:       (binary_type, ep_file_offset, name_of_ep_section)
+        :param path: path to the executable
+        :return:     (binary_type, ep_file_offset, ep_section, ep_section_is_writable)
         """
         # parse the input executable using LIEF (catch warnings from stderr)
-        bn =lief.parse(path)
+        bn = lief.parse(path)
         if bn is None:
-            return REMINDer._log(f"{path} is not an executable", TypeError)
+            self._log(f"{path} is not an executable", TypeError)
+            return None, None, None, False
         btype, fn = bn.format.__name__, os.path.basename(path)
         # get the EP, EP's section and the WRITE flag for EP's section
         try:
@@ -87,20 +85,25 @@ class REMINDer:
                 ep = bn.virtual_address_to_offset(bn.entrypoint)
                 # e.g. with UPX, the section table header gets packed too, hence LIEF gives 0 section parsed
                 ep_section = bn.section_from_offset(ep) if len(bn.sections) > 0 else None
-                # when #sections=0, the sample will be considered as packed anyway, so set wflag=False
-                wflag = ep_section.has(lief.ELF.SECTION_FLAGS.WRITE if btype == "ELF" else \
-                                       lief.MachO.SECTION_FLAGS.PURE_INSTRUCTIONS) if len(bn.sections) > 0 else False
+                # when the EP section is unknown, the sample will be considered as packed anyway, so set wflag=False
+                if ep_section is None:
+                    wflag = False
+                elif btype == "ELF":
+                    wflag = ep_section.has(lief.ELF.Section.FLAGS.WRITE)
+                else:
+                    # Mach-O sections have no permission ; these are held by the segment they belong to
+                    wflag = ep_section.has_segment and \
+                            bool(ep_section.segment.init_protection & lief.MachO.SegmentCommand.VM_PROTECTIONS.W.value)
             elif btype == "PE":
                 ep_addr = bn.optional_header.addressof_entrypoint
                 ep, ep_section = bn.rva_to_offset(ep_addr), bn.section_from_rva(ep_addr)
-                wflag = ep_section.has_characteristic(lief.PE.Section.CHARACTERISTICS.MEM_WRITE)
+                wflag = ep_section is not None and \
+                        ep_section.has_characteristic(lief.PE.Section.CHARACTERISTICS.MEM_WRITE)
             else:
-                REMINDer._log(f"{fn} has an unsupported format", OSError, "warning")
+                self._log(f"{fn} has an unsupported format", OSError, "warning")
                 return None, None, None, False
             return btype, ep, ep_section, wflag
-        #except AttributeError:
-        #    return btype, None, None, False
         except Exception as e:
-            REMINDer._log(str(e), RuntimeError)
+            self._log(str(e), RuntimeError)
             return btype, None, None, False
 

@@ -19,7 +19,7 @@ authors = [
 description = "Implementation of the packing detection heuristic from the paper \"Packed PE File Detection for Malware Forensics\" of Han et al."
 license = {file = "LICENSE"}
 keywords = ["packing", "packed-executable", "packing-detection"]
-requires-python = ">=3.8,<4"
+requires-python = ">=3.10,<4"
 classifiers = [
   "Development Status :: 5 - Production/Stable",
   "Environment :: Console",

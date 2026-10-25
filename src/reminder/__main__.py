@@ -22,7 +22,7 @@ class Positive:
     def __call__(self, string):
         try:
             n = literal_eval(string)
-        except ValueError:
+        except (SyntaxError, ValueError):
             raise ValueError(string)
         if not isinstance(n, self._types) or n < 0.:
             raise ValueError(string)
@@ -68,10 +68,7 @@ def main():
         if dt != "":
             print(dt)
     except Exception as e:
-        if "magic not found." in str(e):
-            e.value = "Not a valid executable file"
-        if str(e) != "no result":
-            args.logger.exception(e)
+        args.logger.exception(e)
         code = 1
     return code
 
