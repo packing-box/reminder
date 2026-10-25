@@ -1,4 +1,4 @@
-<p align="center"><img src="https://github.com/packing-box/REMINDer/raw/main/docs/logo.png"></p>
+<p align="center"><img src="https://github.com/packing-box/REMINDer/raw/main/docs/pages/img/logo.png"></p>
 <h1 align="center">REMINDer <a href="https://twitter.com/intent/tweet?text=REMINDer%20-%20Packer%20detector%20using%20an%20entropy-based%20heuristic.%0D%0Ahttps%3a%2f%2fgithub%2ecom%2fpacking-box%2fREMINDer%0D%0A&hashtags=python,packer,packingdetection,entropy"><img src="https://img.shields.io/badge/Tweet--lightgrey?logo=twitter&style=social" alt="Tweet" height="20"/></a></h1>
 <h3 align="center">Detect packers on executable files using a simple entropy-based heuristic.</h3>
 
