@@ -4,6 +4,7 @@
 
 [![PyPi](https://img.shields.io/pypi/v/reminder-detector.svg)](https://pypi.python.org/pypi/reminder-detector/)
 [![Python Versions](https://img.shields.io/pypi/pyversions/reminder-detector.svg)](https://pypi.python.org/pypi/reminder-detector/)
+[![Read The Docs](https://readthedocs.org/projects/reminder/badge/?version=latest)](https://reminder.readthedocs.io/en/latest/?badge=latest)
 [![Build Status](https://github.com/packing-box/reminder/actions/workflows/python-package.yml/badge.svg)](https://github.com/packing-box/reminder/actions/workflows/python-package.yml)
 [![Security](https://github.com/packing-box/reminder/actions/workflows/security.yml/badge.svg)](https://github.com/packing-box/reminder/actions/workflows/security.yml)
 [![License](https://img.shields.io/pypi/l/reminder-detector.svg)](https://pypi.python.org/pypi/reminder-detector/)
@@ -46,11 +47,5 @@ You may also like these:
 - [PEiD](https://github.com/packing-box/peid): Python implementation of the well-known Packed Executable iDentifier ([PEiD](https://www.aldeid.com/wiki/PEiD)).
 - [PyPackerDetect](https://github.com/packing-box/pypackerdetect): Packing detection tool for PE files (fork of [this repository](https://github.com/cylance/PyPackerDetect)).
 
-
-## :clap:  Supporters
-
-[![Stargazers repo roster for @packing-box/REMINDer](https://reporoster.com/stars/dark/packing-box/REMINDer)](https://github.com/packing-box/REMINDer/stargazers)
-
-[![Forkers repo roster for @packing-box/REMINDer](https://reporoster.com/forks/dark/packing-box/REMINDer)](https://github.com/packing-box/REMINDer/network/members)
 
 <p align="center"><a href="#"><img src="https://img.shields.io/badge/Back%20to%20top--lightgrey?style=social" alt="Back to top" height="20"/></a></p>
