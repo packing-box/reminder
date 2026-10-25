@@ -13,6 +13,18 @@ and include:
 - the exact command and its output, ideally with `-v`;
 - if possible, a link to (or the hash of) the sample.
 
+## Security
+
+Please do **not** report vulnerabilities in public issues. See the
+[security policy](https://github.com/packing-box/reminder/blob/main/SECURITY.md):
+report them privately through the repository's *Security* tab
+(*Report a vulnerability*).
+
+Dependencies are monitored by Dependabot and audited with
+[pip-audit](https://github.com/pypa/pip-audit) by the `security` workflow
+(`.github/workflows/security.yml`), on every push and pull request to `main`
+and weekly.
+
 ## Tuning thresholds
 
 The default thresholds are in the `THRESHOLDS` dictionary of
