@@ -11,6 +11,7 @@ as a Python package with a console script.
 [![PyPi](https://img.shields.io/pypi/v/reminder-detector.svg)](https://pypi.python.org/pypi/reminder-detector/)
 [![Python Versions](https://img.shields.io/pypi/pyversions/reminder-detector.svg)](https://pypi.python.org/pypi/reminder-detector/)
 [![Build Status](https://github.com/packing-box/reminder/actions/workflows/python-package.yml/badge.svg)](https://github.com/packing-box/reminder/actions/workflows/python-package.yml)
+[![Security](https://github.com/packing-box/reminder/actions/workflows/security.yml/badge.svg)](https://github.com/packing-box/reminder/actions/workflows/security.yml)
 [![License](https://img.shields.io/pypi/l/reminder-detector.svg)](https://pypi.python.org/pypi/reminder-detector/)
 
 ## Features
